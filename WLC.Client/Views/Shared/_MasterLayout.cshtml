@@ -1,0 +1,171 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>WLC | Admin</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link href="~/Content/CSS/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="~/Content/CSS/font-awesome.min.css" rel="stylesheet" />
+    <!-- Ionicons -->
+    <link href="~/Content/CSS/ionicons.min.css" rel="stylesheet" />
+    <!-- bootstrap datepicker -->
+    <link href="~/Content/CSS/datepicker3.css" rel="stylesheet" />
+    <!-- DataTable style -->
+    <link href="~/Content/DataTables/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <!-- Select2 style -->
+    <link href="~/Content/CSS/select2.min.css" rel="stylesheet" />
+    <!-- DropzoneJS style -->
+    <link href="~/Scripts/dropzone/basic.min.css" rel="stylesheet" />
+    <link href="~/Scripts/dropzone/dropzone.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/CSS/AdminLTE.min.css">
+    <link rel="stylesheet" href="~/Content/CSS/skin-blue.min.css">
+
+
+    <!-- REQUIRED JS SCRIPTS -->
+    <!-- jQuery 2.2.0 -->
+    <script src="~/Scripts/Core/jquery-2.2.0.min.js"></script>
+    <script src="~/Scripts/Core/jquery-ui.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="~/Scripts/Core/bootstrap.min.js"></script>
+    <!-- jQuery datatables -->
+    <script src="~/Scripts/DataTables/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/DataTables/dataTables.bootstrap.min.js"></script>
+    <!-- DropzoneJS plugin - upload files -->
+    <script src="~/Scripts/dropzone/dropzone.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/Scripts/Core/app.min.js"></script>
+    <script src="~/Scripts/Core/bootstrap-datepicker.js"></script>
+    <!-- Select2 plugin -->
+    <script src="~/Scripts/Core/select2.full.min.js"></script>
+    <!-- Bootstrap Validator -->
+    <script src="~/Scripts/Core/bootstrap.validator.min.js"></script>
+    <!-- App Main-->
+    <script src="~/Scripts/App/main.js"></script>
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <!-- Main Header -->
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b></b></span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg"><b></b></span>
+            </a>
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="/Account/LogOut" title="Çıkış"><i class="fa fa-sign-out"></i>Çıkış</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <img class="img-circle" src="@Url.Action("SessionFotoYukle", "Kullanici")" />
+                    </div>
+                    <div class="pull-left info">
+                        @if (@Session["CurrentUserName_SurName"] != null)
+                        {
+                            <p>@Session["CurrentUserName_SurName"].ToString()</p>
+                        }
+                        else
+                        {<p> Kullanıcı Adı </p>}
+                        <!-- Status -->
+                        <a href="#"><i class="fa fa-circle text-success"></i> Çevrimiçi</a>
+                    </div>
+                </div>
+                <!-- Sidebar Menu -->
+                <ul class="sidebar-menu">
+                    @Html.Action("Menu", "Nav")
+                </ul>
+                <!-- /.sidebar-menu -->
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    <span id="masterTitle"></span>
+                    <small><span id="masterDescription"></span></small>
+                </h1>
+            </section>
+            <!-- Main content -->
+            <section class="content">
+                <div id="mainContentDiv"></div>
+                @RenderBody()
+            </section>
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <!-- To the right -->
+            <div class="pull-right hidden-xs">
+                <strong>Copyright &copy; 2016 .</strong> Tüm hakları saklıdır.
+            </div>
+            <!-- Default to the left -->
+            <a href="#">WLAN Kontroller - WLC</a>
+        </footer>
+    </div>
+    <div id="MessageBoxDiv" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div id="MessageBoxSolid">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        <i id="MessageBoxIcon"></i> <i id="MessageBoxHeaderContent"></i>
+                    </h3>
+                </div>
+                <div id="MessageBoxBodyContent" class="modal-body" style="overflow-y:auto; height: 100px">
+                </div>
+                <div class="modal-footer">
+                    <button id="MessageBoxCloseButton" type="button" data-dismiss="modal">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="LoadingDiv" class="modal" role="dialog">
+        <div class="modal-dialog" style="text-align: center">
+            <img src="~/Content/Image/loader.gif" alt='' />
+            <br />
+            <span style="color: white; font-size: medium">Yükleniyor...</span>
+        </div>
+    </div>
+    <div id="addItemModalDialogDiv" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <i class="fa fa-plus"></i> <h3 id="addItemModalDialogHeader" class="box-title"></h3>
+                </div>
+                <form id="addItemModalDialogForm" data-toggle="validator" role="form">
+                    <div id="addItemModalDialogBodyDiv" class="box-body">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $("#masterTitle").html("WLAN Listesi");
+        $("#masterDescription").text("Sistemde tanımlı WLAN'ları listeler.");
+        LoadListData();
+    });
+
+    function LoadListData() {
+        $("#tableWlanListesi").dataTable({
+            "sAjaxSource": "Default/JsonSorgulaList",
+            "aaSorting": [[1, 'asc']],
+            "aoColumnDefs": [
+            {
+                "aTargets": [15],
+                "bSortable": false,
+                "mRender": function (data, type, row) {
+                    return '<input type="button" class="btn btn-block btn-success" value="İşle" Id ="' + row[0] + '"/>';
+                }
+            }]
+        });
+    }
+</script>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-body">
+                <table id="tableWlanListesi" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>İL</th>
+                            <th>İLÇE</th>
+                            <th>OKUL ADI</th>
+                            <th>OKUL KODU</th>
+                            <th>AP SAYISI</th>
+                            <th>WLC1</th>
+                            <th>WLC1 IP</th>
+                            <th>WLC2</th>
+                            <th>WLC2 IP</th>
+                            <th>SUNUCU</th>
+                            <th>FLEX</th>
+                            <th>TESIS</th>
+                            <th>IP</th>
+                            <th>SUBNET</th>
+                            <th style="width:5%"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
