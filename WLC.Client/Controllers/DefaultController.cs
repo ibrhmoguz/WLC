@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
@@ -151,37 +152,91 @@ namespace WLC.Admin.Controllers
 
         public string RaporGunlukAp()
         {
+            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
+            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
+            var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            var iSortDirection = Request["sSortDir_0"];
+
             var doneWlcList = wlcTanimRepo.WLCTanimlar.Where(x => x.DONE.Equals(true) && x.TARIH.HasValue);
             var groupedList = (from wlc in doneWlcList
-                               group wlc by wlc.TARIH.Value.ToShortDateString() into wlcGrouped
-                               select new { TARIH = wlcGrouped.Key, APSAYISI = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) }).ToList();
+                               group wlc by wlc.TARIH.Value.ToShortDateString()
+                                   into wlcGrouped
+                                   select new Tuple<string, int>(
+                                       wlcGrouped.Key,
+                                       wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI))
+                                       ));
+
+            var totalRecords = groupedList.Count();
+            if (iDisplayLength == -1)
+            {
+                iDisplayLength = totalRecords;
+            }
+
+            Func<Tuple<string, int>, string> orderFunc = (item => iSortColumnIndex == 0 ? item.Item1 : item.Item2.ToString());
+
+            var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
+            var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
+
             var result = new
             {
                 iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
                 iTotalDisplayRecords = groupedList.Count(),
-                aaData = (from item in groupedList
-                          select new[] { item.TARIH, Convert.ToString(item.APSAYISI) })
+                aaData = (from item in list
+                          select new[]
+                          {
+                              item.Item1, 
+                              item.Item2.ToString() 
+                          })
             };
             return JsonConvert.SerializeObject(result);
         }
 
         public string RaporGunlukKullaniciAp()
         {
+            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
+            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
+            var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            var iSortDirection = Request["sSortDir_0"];
+
             var doneWlcList = wlcTanimRepo.WLCTanimlar.Where(x => x.DONE.Equals(true) && x.TARIH.HasValue);
             var groupedList = (from wlc in doneWlcList
-                               group wlc by new { TARIH = wlc.TARIH.Value.ToShortDateString(), wlc.KULLANICI } into wlcGrouped
-                               select new
+                               group wlc by new
                                {
+                                   TARIH = wlc.TARIH.Value.ToShortDateString(),
+                                   wlc.KULLANICI
+                               } into wlcGrouped
+                               select new Tuple<string, string, string>(
                                    wlcGrouped.Key.TARIH,
                                    wlcGrouped.Key.KULLANICI,
-                                   APSAYISI = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI))
-                               }).ToList();
+                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)).ToString()
+                               ));
+
+            var totalRecords = groupedList.Count();
+            if (iDisplayLength == -1)
+            {
+                iDisplayLength = totalRecords;
+            }
+
+            Func<Tuple<string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
+                ? item.Item1
+                : iSortColumnIndex == 1
+                    ? item.Item2
+                    : item.Item3);
+
+            var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
+            var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
+
             var result = new
             {
                 iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
                 iTotalDisplayRecords = groupedList.Count(),
-                aaData = (from item in groupedList
-                          select new[] { item.TARIH, item.KULLANICI, Convert.ToString(item.APSAYISI) })
+                aaData = (from item in list
+                          select new[] 
+                          { 
+                              item.Item1, 
+                              item.Item2, 
+                              item.Item3
+                          })
             };
             return JsonConvert.SerializeObject(result);
         }
@@ -205,26 +260,48 @@ namespace WLC.Admin.Controllers
 
         public string RaporToplamIlAp()
         {
+            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
+            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
+            var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            var iSortDirection = Request["sSortDir_0"];
+
             var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
                                group wlc by wlc.IL into wlcGrouped
-                               select new
-                               {
-                                   Il = wlcGrouped.Key,
-                                   ToplamAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   YapilanAp = wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   KalanAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
-                               }).ToList();
+                               select new Tuple<string, string, string, string>(
+                                   wlcGrouped.Key,
+                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
+                                   wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
+                                   (wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))).ToString()
+                               ));
+
+            var totalRecords = groupedList.Count();
+            if (iDisplayLength == -1)
+            {
+                iDisplayLength = totalRecords;
+            }
+
+            Func<Tuple<string, string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
+                ? item.Item1
+                : iSortColumnIndex == 1
+                    ? item.Item2
+                    : iSortColumnIndex == 2
+                        ? item.Item3
+                        : item.Item4);
+
+            var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
+            var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
                 iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
                 iTotalDisplayRecords = groupedList.Count(),
-                aaData = (from item in groupedList
+                aaData = (from item in list
                           select new[] 
-                          { item.Il, 
-                              item.ToplamAp.ToString(), 
-                              item.YapilanAp.ToString(),
-                              item.KalanAp.ToString()
+                          { 
+                              item.Item1, 
+                              item.Item2, 
+                              item.Item3,
+                              item.Item4
                           })
             };
             return JsonConvert.SerializeObject(result);
@@ -232,26 +309,47 @@ namespace WLC.Admin.Controllers
 
         public string RaporToplamIlceAp()
         {
+            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
+            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
+            var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            var iSortDirection = Request["sSortDir_0"];
+
             var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
                                group wlc by new { wlc.IL, wlc.ILCE } into wlcGrouped
-                               select new
-                               {
-                                   Ilce = wlcGrouped.Key.IL + "-" + wlcGrouped.Key.ILCE,
-                                   ToplamAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   YapilanAp = wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   KalanAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
-                               }).ToList();
+                               select new Tuple<string, string, string, string>(
+                                   wlcGrouped.Key.IL + "-" + wlcGrouped.Key.ILCE,
+                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
+                                   wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
+                                   (wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))).ToString()
+                               ));
+
+            var totalRecords = groupedList.Count();
+            if (iDisplayLength == -1)
+            {
+                iDisplayLength = totalRecords;
+            }
+
+            Func<Tuple<string, string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
+                ? item.Item1
+                : iSortColumnIndex == 1
+                    ? item.Item2
+                    : iSortColumnIndex == 2
+                        ? item.Item3
+                        : item.Item4);
+
+            var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
+            var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
                 iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
                 iTotalDisplayRecords = groupedList.Count(),
-                aaData = (from item in groupedList
+                aaData = (from item in list
                           select new[] 
-                          { item.Ilce, 
-                              item.ToplamAp.ToString(), 
-                              item.YapilanAp.ToString(),
-                              item.KalanAp.ToString()
+                          { item.Item1, 
+                              item.Item2, 
+                              item.Item3,
+                              item.Item4
                           })
             };
             return JsonConvert.SerializeObject(result);
@@ -259,26 +357,68 @@ namespace WLC.Admin.Controllers
 
         public string RaporToplamOkulAp()
         {
+            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
+            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
+            var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            var iSortDirection = Request["sSortDir_0"];
+
             var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
-                               group wlc by wlc.OKULADI into wlcGrouped
-                               select new
+                               group wlc by new
                                {
-                                   OkulAdi = wlcGrouped.Key,
-                                   ToplamAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   YapilanAp = wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   KalanAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
-                               }).ToList();
+                                   wlc.OKULADI,
+                                   wlc.IL,
+                                   wlc.ILCE,
+                                   wlc.OKULKODU
+                               } into wlcGrouped
+                               select new Tuple<string, string, string, int, int, int>(
+                                   wlcGrouped.Key.OKULADI,
+                                   wlcGrouped.Key.IL + "-" + wlcGrouped.Key.ILCE,
+                                   wlcGrouped.Key.OKULKODU,
+                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
+                               ));
+
+            var totalRecords = groupedList.Count();
+            if (iDisplayLength == -1)
+            {
+                iDisplayLength = totalRecords;
+            }
+
+            Func<Tuple<string, string, string, int, int, int>, string> orderFunc1 = (item => iSortColumnIndex == 0
+                ? item.Item1
+                : iSortColumnIndex == 1
+                    ? item.Item2
+                    : iSortColumnIndex == 2
+                        ? item.Item3
+                        : item.Item1);
+
+            Func<Tuple<string, string, string, int, int, int>, int> orderFunc2 = (item => iSortColumnIndex == 3
+                ? item.Item4
+                : iSortColumnIndex == 4
+                    ? item.Item5
+                    : iSortColumnIndex == 5
+                        ? item.Item6
+                        : item.Item4);
+
+            var orderFunc = (iSortColumnIndex.Equals(0) || iSortColumnIndex.Equals(1) || iSortColumnIndex.Equals(2)) ? orderFunc1 : orderFunc2;
+
+            var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
+            var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
-                iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
+                iTotalRecords = totalRecords,
                 iTotalDisplayRecords = groupedList.Count(),
-                aaData = (from item in groupedList
-                          select new[] 
-                          { item.OkulAdi, 
-                              item.ToplamAp.ToString(), 
-                              item.YapilanAp.ToString(),
-                              item.KalanAp.ToString()
+                aaData = (from item in list
+                          select new IComparable[] 
+                          { 
+                              item.Item1,
+                              item.Item2,
+                              item.Item3,
+                              item.Item4, 
+                              item.Item5,
+                              item.Item6
                           })
             };
             return JsonConvert.SerializeObject(result);
