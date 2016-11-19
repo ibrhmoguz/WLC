@@ -2,41 +2,55 @@
     $(function () {
         $("#masterTitle").html("<i class='fa fa-cube'></i> Raporlar");
         $("#masterDescription").text("Sistemde tanımlı WLAN'ları raporlar.");
+        $("#tableRaporGunlukAP").dataTable({
+            "sAjaxSource": "Default/RaporGunlukAp",
+            "aaSorting": [[0, 'asc']],
+            "retrieve": true
+        });
+
         $("#RaporGunlukAP").click(function () {
-            alert("tab1");
+            $("#tableRaporGunlukAP").dataTable({
+                "sAjaxSource": "Default/RaporGunlukAp",
+                "aaSorting": [[0, 'asc']],
+                "retrieve": true
+            });
         });
         $("#RaporGunlukKullaniciAP").click(function () {
-            alert("tab2");
+            $("#tableRaporGunlukKullaniciAP").dataTable({
+                "sAjaxSource": "Default/RaporGunlukKullaniciAp",
+                "aaSorting": [[1, 'asc']],
+                "retrieve": true
+            });
         });
         $("#RaporToplamAP").click(function () {
-            alert("tab3");
+            $("#tableRaporToplamAP").dataTable({
+                "sAjaxSource": "Default/RaporToplamAp",
+                "aaSorting": [[0, 'asc']],
+                "retrieve": true
+            });
         });
         $("#RaporToplamIlAP").click(function () {
-            alert("tab4");
+            $("#tableRaporToplamIlAP").dataTable({
+                "sAjaxSource": "Default/RaporToplamIlAp",
+                "aaSorting": [[0, 'asc']],
+                "retrieve": true
+            });
         });
         $("#RaporToplamIlceAP").click(function () {
-            alert("tab5");
+            $("#tableRaporToplamIlceAP").dataTable({
+                "sAjaxSource": "Default/RaporToplamIlceAp",
+                "aaSorting": [[0, 'asc']],
+                "retrieve": true
+            });
         });
         $("#RaporToplamOkulAP").click(function () {
-            alert("tab6");
+            $("#tableRaporToplamOkulAP").dataTable({
+                "sAjaxSource": "Default/RaporToplamOkulAp",
+                "aaSorting": [[0, 'asc']],
+                "retrieve": true
+            });
         });
     });
-
-    function LoadListData() {
-        $("#tableWlanListesi").dataTable({
-            "sAjaxSource": "Default/JsonRaporList",
-            "aaSorting": [[1, 'asc']],
-            "aoColumnDefs": [
-            {
-                "aTargets": [0],
-                "bVisible": false,
-            },
-            {
-                "aTargets": [15],
-                "bVisible": false,
-            }]
-        });
-    }
 </script>
 
 <div class="row">

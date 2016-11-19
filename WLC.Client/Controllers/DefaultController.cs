@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -148,5 +149,139 @@ namespace WLC.Admin.Controllers
             return View();
         }
 
+        public string RaporGunlukAp()
+        {
+            var doneWlcList = wlcTanimRepo.WLCTanimlar.Where(x => x.DONE.Equals(true) && x.TARIH.HasValue);
+            var groupedList = (from wlc in doneWlcList
+                               group wlc by wlc.TARIH.Value.ToShortDateString() into wlcGrouped
+                               select new { TARIH = wlcGrouped.Key, APSAYISI = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) }).ToList();
+            var result = new
+            {
+                iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
+                iTotalDisplayRecords = groupedList.Count(),
+                aaData = (from item in groupedList
+                          select new[] { item.TARIH, Convert.ToString(item.APSAYISI) })
+            };
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public string RaporGunlukKullaniciAp()
+        {
+            var doneWlcList = wlcTanimRepo.WLCTanimlar.Where(x => x.DONE.Equals(true) && x.TARIH.HasValue);
+            var groupedList = (from wlc in doneWlcList
+                               group wlc by new { TARIH = wlc.TARIH.Value.ToShortDateString(), wlc.KULLANICI } into wlcGrouped
+                               select new
+                               {
+                                   wlcGrouped.Key.TARIH,
+                                   wlcGrouped.Key.KULLANICI,
+                                   APSAYISI = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI))
+                               }).ToList();
+            var result = new
+            {
+                iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
+                iTotalDisplayRecords = groupedList.Count(),
+                aaData = (from item in groupedList
+                          select new[] { item.TARIH, item.KULLANICI, Convert.ToString(item.APSAYISI) })
+            };
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public string RaporToplamAp()
+        {
+            var toplamAp = wlcTanimRepo.WLCTanimlar.Sum(x => Convert.ToInt32(x.APSAYISI));
+            var yapilanAp = wlcTanimRepo.WLCTanimlar.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI));
+            var result = new
+            {
+                iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
+                iTotalDisplayRecords = 1,
+                aaData = new[] { new[] { 
+                    toplamAp,
+                    yapilanAp,
+                    toplamAp - yapilanAp
+                }}
+            };
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public string RaporToplamIlAp()
+        {
+            var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
+                               group wlc by wlc.IL into wlcGrouped
+                               select new
+                               {
+                                   Il = wlcGrouped.Key,
+                                   ToplamAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   YapilanAp = wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   KalanAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
+                               }).ToList();
+
+            var result = new
+            {
+                iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
+                iTotalDisplayRecords = groupedList.Count(),
+                aaData = (from item in groupedList
+                          select new[] 
+                          { item.Il, 
+                              item.ToplamAp.ToString(), 
+                              item.YapilanAp.ToString(),
+                              item.KalanAp.ToString()
+                          })
+            };
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public string RaporToplamIlceAp()
+        {
+            var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
+                               group wlc by new { wlc.IL, wlc.ILCE } into wlcGrouped
+                               select new
+                               {
+                                   Ilce = wlcGrouped.Key.IL + "-" + wlcGrouped.Key.ILCE,
+                                   ToplamAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   YapilanAp = wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   KalanAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
+                               }).ToList();
+
+            var result = new
+            {
+                iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
+                iTotalDisplayRecords = groupedList.Count(),
+                aaData = (from item in groupedList
+                          select new[] 
+                          { item.Ilce, 
+                              item.ToplamAp.ToString(), 
+                              item.YapilanAp.ToString(),
+                              item.KalanAp.ToString()
+                          })
+            };
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public string RaporToplamOkulAp()
+        {
+            var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
+                               group wlc by wlc.OKULADI into wlcGrouped
+                               select new
+                               {
+                                   OkulAdi = wlcGrouped.Key,
+                                   ToplamAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   YapilanAp = wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
+                                   KalanAp = wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
+                               }).ToList();
+
+            var result = new
+            {
+                iTotalRecords = wlcTanimRepo.WLCTanimlar.Count(),
+                iTotalDisplayRecords = groupedList.Count(),
+                aaData = (from item in groupedList
+                          select new[] 
+                          { item.OkulAdi, 
+                              item.ToplamAp.ToString(), 
+                              item.YapilanAp.ToString(),
+                              item.KalanAp.ToString()
+                          })
+            };
+            return JsonConvert.SerializeObject(result);
+        }
     }
 }
