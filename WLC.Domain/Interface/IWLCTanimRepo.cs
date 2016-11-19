@@ -10,5 +10,6 @@ namespace WLC.Domain.Interface
     public interface IWLCTanimRepo
     {
         IEnumerable<WLCTanim> WLCTanimlar { get; }
+        bool WLCKaydet(string id, string kullanici);
     }
 }

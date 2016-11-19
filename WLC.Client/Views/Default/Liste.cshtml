@@ -1,6 +1,6 @@
 ﻿<script type="text/javascript">
     $(function () {
-        $("#masterTitle").html("WLAN Listesi");
+        $("#masterTitle").html("<i class='fa fa-search'></i> WLAN Listesi");
         $("#masterDescription").text("Sistemde tanımlı WLAN'ları listeler.");
         LoadListData();
     });
@@ -9,6 +9,11 @@
         $("#tableWlanListesi").dataTable({
             "sAjaxSource": "Default/JsonSorgulaList",
             "aaSorting": [[1, 'asc']],
+            "fnDrawCallback": function() {
+                $(".isle").click(function () {
+                    Isle($(this).attr("Id"));
+                });
+            },
             "aoColumnDefs": [
             {
                 "aTargets": [0],
@@ -16,11 +21,31 @@
             },
             {
                 "aTargets": [15],
+                "bVisible": false,
+            },
+            {
+                "aTargets": [16],
                 "bSortable": false,
                 "mRender": function (data, type, row) {
-                    return '<input type="button" class="btn btn-block btn-success" value="İşle" Id ="' + row[0] + '"/>';
+                    if (row[15] == "False") {
+                        return '<input type="button" class="btn btn-block btn-success isle" value="İşle" Id ="' + row[0] + '"/>';
+                    }
+                    return '';
                 }
             }]
+        });
+    }
+
+    function Isle(id) {
+        $.ajax({
+            type: 'POST',
+            url: "Default/Isle",
+            data: "id=" + id,
+            dataType: 'json',
+            success: function (msg) {
+                $("#tableWlanListesi").dataTable().fnDraw(false);
+                return true;
+            }
         });
     }
 </script>
@@ -46,6 +71,7 @@
                             <th>TESIS</th>
                             <th>IP</th>
                             <th>SUBNET</th>
+                            <th></th>
                             <th style="width:5%"></th>
                         </tr>
                     </thead>

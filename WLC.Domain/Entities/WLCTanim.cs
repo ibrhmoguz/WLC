@@ -23,5 +23,8 @@ namespace WLC.Domain.Entities
         public string TESISKODU { get; set; }
         public string IP { get; set; }
         public string SUBNET { get; set; }
+        public bool DONE { get; set; }
+        public string KULLANICI { get; set; }
+        public DateTime? TARIH { get; set; }
     }
 }

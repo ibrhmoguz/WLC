@@ -123,10 +123,23 @@ namespace WLC.Admin.Controllers
                                 item.TESISKODU,
                                 item.IP,
                                 item.SUBNET,
+                                Convert.ToString(item.DONE),
                                 ""
                             })
             };
 
+            return JsonConvert.SerializeObject(result);
+        }
+
+        [HttpPost]
+        public string Isle(string id)
+        {
+            var kullanici = Session["CurrentUserName"].ToString();
+            var status = wlcTanimRepo.WLCKaydet(id, kullanici);
+            var result = new
+            {
+                Status = status.ToString()
+            };
             return JsonConvert.SerializeObject(result);
         }
 

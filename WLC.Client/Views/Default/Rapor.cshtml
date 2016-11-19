@@ -1,1 +1,138 @@
-﻿
+﻿<script type="text/javascript">
+    $(function () {
+        $("#masterTitle").html("<i class='fa fa-cube'></i> Raporlar");
+        $("#masterDescription").text("Sistemde tanımlı WLAN'ları raporlar.");
+        $("#RaporGunlukAP").click(function () {
+            alert("tab1");
+        });
+        $("#RaporGunlukKullaniciAP").click(function () {
+            alert("tab2");
+        });
+        $("#RaporToplamAP").click(function () {
+            alert("tab3");
+        });
+        $("#RaporToplamIlAP").click(function () {
+            alert("tab4");
+        });
+        $("#RaporToplamIlceAP").click(function () {
+            alert("tab5");
+        });
+        $("#RaporToplamOkulAP").click(function () {
+            alert("tab6");
+        });
+    });
+
+    function LoadListData() {
+        $("#tableWlanListesi").dataTable({
+            "sAjaxSource": "Default/JsonRaporList",
+            "aaSorting": [[1, 'asc']],
+            "aoColumnDefs": [
+            {
+                "aTargets": [0],
+                "bVisible": false,
+            },
+            {
+                "aTargets": [15],
+                "bVisible": false,
+            }]
+        });
+    }
+</script>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a id="RaporGunlukAP" href="#tab_1" data-toggle="tab" aria-expanded="false">Günlük AP Sayısı</a></li>
+                <li class=""><a id="RaporGunlukKullaniciAP" href="#tab_2" data-toggle="tab" aria-expanded="false">Günlük Kullanıcı AP Sayısı</a></li>
+                <li class=""><a id="RaporToplamAP" href="#tab_3" data-toggle="tab" aria-expanded="true">Toplam AP Sayısı(Genel)</a></li>
+                <li class=""><a id="RaporToplamIlAP" href="#tab_4" data-toggle="tab" aria-expanded="true">Toplam AP Sayısı(İl Bazında)</a></li>
+                <li class=""><a id="RaporToplamIlceAP" href="#tab_5" data-toggle="tab" aria-expanded="true">Toplam AP Sayısı(İlçe Bazında)</a></li>
+                <li class=""><a id="RaporToplamOkulAP" href="#tab_6" data-toggle="tab" aria-expanded="true">Toplam AP Sayısı(Okul Bazında)</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <table id="tableRaporGunlukAP" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>TARİH</th>
+                                <th>AP SAYISI</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_2">
+                    <table id="tableRaporGunlukKullaniciAP" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>TARİH</th>
+                                <th>KULLANICI</th>
+                                <th>AP SAYISI</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_3">
+                    <table id="tableRaporToplamAP" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>TOPLAM AP</th>
+                                <th>YAPILMIŞ AP</th>
+                                <th>KALAN AP</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_4">
+                    <table id="tableRaporToplamIlAP" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>İL</th>
+                                <th>TOPLAM AP</th>
+                                <th>YAPILMIŞ AP</th>
+                                <th>KALAN AP</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_5">
+                    <table id="tableRaporToplamIlceAP" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>İLÇE</th>
+                                <th>TOPLAM AP</th>
+                                <th>YAPILMIŞ AP</th>
+                                <th>KALAN AP</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_6">
+                    <table id="tableRaporToplamOkulAP" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>OKUL</th>
+                                <th>TOPLAM AP</th>
+                                <th>YAPILMIŞ AP</th>
+                                <th>KALAN AP</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+        </div>
+    </div>
+</div>

@@ -17,5 +17,25 @@ namespace WLC.Domain.Repo
         {
             get { return context.WLCTanimlar.ToList(); }
         }
+
+        public bool WLCKaydet(string id, string kullanici)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return false;
+            }
+            else
+            {
+                var wlcTanim = context.WLCTanimlar.Find(Convert.ToInt32(id));
+                if (wlcTanim != null)
+                {
+                    wlcTanim.DONE = true;
+                    wlcTanim.KULLANICI = kullanici;
+                    wlcTanim.TARIH = DateTime.Now;
+                }
+            }
+            context.SaveChanges();
+            return true;
+        }
     }
 }
