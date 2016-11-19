@@ -370,13 +370,13 @@ namespace WLC.Admin.Controllers
                                    wlc.ILCE,
                                    wlc.OKULKODU
                                } into wlcGrouped
-                               select new Tuple<string, string, string, int, int, int>(
+                               select new Tuple<string, string, string, string, string, string>(
                                    wlcGrouped.Key.OKULADI,
                                    wlcGrouped.Key.IL + "-" + wlcGrouped.Key.ILCE,
                                    wlcGrouped.Key.OKULKODU,
-                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)),
-                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))
+                                   wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
+                                   wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
+                                   (wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Where(x => x.DONE.Equals(true)).Sum(x => Convert.ToInt32(x.APSAYISI))).ToString()
                                ));
 
             var totalRecords = groupedList.Count();
@@ -385,23 +385,18 @@ namespace WLC.Admin.Controllers
                 iDisplayLength = totalRecords;
             }
 
-            Func<Tuple<string, string, string, int, int, int>, string> orderFunc1 = (item => iSortColumnIndex == 0
-                ? item.Item1
-                : iSortColumnIndex == 1
-                    ? item.Item2
-                    : iSortColumnIndex == 2
-                        ? item.Item3
-                        : item.Item1);
-
-            Func<Tuple<string, string, string, int, int, int>, int> orderFunc2 = (item => iSortColumnIndex == 3
-                ? item.Item4
-                : iSortColumnIndex == 4
-                    ? item.Item5
-                    : iSortColumnIndex == 5
-                        ? item.Item6
-                        : item.Item4);
-
-            var orderFunc = (iSortColumnIndex.Equals(0) || iSortColumnIndex.Equals(1) || iSortColumnIndex.Equals(2)) ? orderFunc1 : orderFunc2;
+            Func<Tuple<string, string, string, string, string, string>, string> orderFunc =
+                (item => iSortColumnIndex == 0
+                    ? item.Item1
+                    : iSortColumnIndex == 1
+                        ? item.Item2
+                        : iSortColumnIndex == 2
+                            ? item.Item3
+                            : iSortColumnIndex == 3
+                                ? item.Item4
+                                : iSortColumnIndex == 4
+                                    ? item.Item5
+                                    : item.Item6);
 
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
             var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
@@ -411,7 +406,7 @@ namespace WLC.Admin.Controllers
                 iTotalRecords = totalRecords,
                 iTotalDisplayRecords = groupedList.Count(),
                 aaData = (from item in list
-                          select new IComparable[] 
+                          select new[] 
                           { 
                               item.Item1,
                               item.Item2,
