@@ -54,7 +54,24 @@
                 "sAjaxSource": "Default/RaporToplamOkulAp",
                 "aaSorting": [[0, 'asc']],
                 "retrieve": true,
-                "searching": false
+                "searching": false,
+                "serverSide": false,
+                dom: 'Bfrtip',
+                buttons: [
+                {
+                    extend: 'print',
+                    className: 'btn',
+                    defaultContent: '',
+                    title: 'Okul Bazında AP Sayı Raporu',
+                    text: '<i class="fa fa-print"></i> Print',
+                },
+                {
+                    extend: 'excelHtml5',
+                    className: 'btn',
+                    defaultContent: '',
+                    title: 'Okul Bazında AP Sayı Raporu',
+                    text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
+                }]
             });
         });
     });

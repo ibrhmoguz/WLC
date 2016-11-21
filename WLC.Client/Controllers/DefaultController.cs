@@ -357,8 +357,10 @@ namespace WLC.Admin.Controllers
 
         public string RaporToplamOkulAp()
         {
+            /*
             var iDisplayLength = int.Parse(Request["iDisplayLength"]);
             var iDisplayStart = int.Parse(Request["iDisplayStart"]);
+             * */
             var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             var iSortDirection = Request["sSortDir_0"];
 
@@ -380,10 +382,10 @@ namespace WLC.Admin.Controllers
                                ));
 
             var totalRecords = groupedList.Count();
-            if (iDisplayLength == -1)
-            {
-                iDisplayLength = totalRecords;
-            }
+            //if (iDisplayLength == -1)
+            //{
+            //    iDisplayLength = totalRecords;
+            //}
 
             Func<Tuple<string, string, string, string, string, string>, string> orderFunc =
                 (item => iSortColumnIndex == 0
@@ -399,13 +401,13 @@ namespace WLC.Admin.Controllers
                                     : item.Item6);
 
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
-            var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
+            //var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
                 iTotalRecords = totalRecords,
                 iTotalDisplayRecords = groupedList.Count(),
-                aaData = (from item in list
+                aaData = (from item in orderedList
                           select new[] 
                           { 
                               item.Item1,
