@@ -14,6 +14,7 @@ namespace WLC.Domain.Entities
         public string OKULADI { get; set; }
         public string OKULKODU { get; set; }
         public string APSAYISI { get; set; }
+        public string YAPILANAPSAYISI { get; set; }
         public string WLC1NAME { get; set; }
         public string WLC1IP { get; set; }
         public string WLC2NAME { get; set; }

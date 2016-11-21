@@ -130,39 +130,39 @@ function DropDownLoad(dropDownListId, url, selected) {
 /********** JQUERY DATATABLES DEFAULTS  **********/
 
 $.extend(true, $.fn.dataTable.defaults, {
-    "oLanguage": {
-        "sSearch": "Arama ",
-        "sProcessing": "Yükleniyor...",
-        "sLengthMenu": "<span class='showentries'>Satır Sayısı:</span> _MENU_  ",
-        "sZeroRecords": "",
-        "sEmptyTable": "Hiç kayıt bulunamadı.",
-        "sLoadingRecords": "Yükleniyor...",
-        "sInfo": "Toplam _TOTAL_ Kayıt İçinden _START_ ile _END_ Arası Kayıtlar Gösteriliyor.",
-        "sInfoEmpty": "",
-        "sInfoFiltered": "(Filtreleme Dışında _MAX_ Toplam Kayıt Vardır)",
-        "sInfoPostFix": "",
-        "sInfoThousands": ",",
-        "oPaginate": {
-            "sFirst": "İlk",
-            "sPrevious": "Geri",
-            "sNext": "İleri",
-            "sLast": "Son"
+    oLanguage: {
+        sSearch: "Arama ",
+        sProcessing: "Yükleniyor...",
+        sLengthMenu: "<span class='showentries'>Satır Sayısı:</span> _MENU_  ",
+        sZeroRecords: "",
+        sEmptyTable: "Hiç kayıt bulunamadı.",
+        sLoadingRecords: "Yükleniyor...",
+        sInfo: "Toplam _TOTAL_ Kayıt İçinden _START_ ile _END_ Arası Kayıtlar Gösteriliyor.",
+        sInfoEmpty: "",
+        sInfoFiltered: "(Filtreleme Dışında _MAX_ Toplam Kayıt Vardır)",
+        sInfoPostFix: "",
+        sInfoThousands: ",",
+        oPaginate: {
+            sFirst: "İlk",
+            sPrevious: "Geri",
+            sNext: "İleri",
+            sLast: "Son"
         }
     },
-    "bSort": true,
-    "processing": true,
-    "serverSide": true,
-    "filter": true,
-    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "Hepsi"]],
-    "pageLength": 10,
-    "searching": true,
-    "info": true,
-    "lengthChange": true,
-    "paging": true,
-    "bAutoWidth": false,
-    "pagingType": "full_numbers",
-    "fnPreDrawCallback": function () { ShowLoadingAnimation(); },
-    "fnDrawCallback": function () { HideLoadingAnimation(); }
+    bSort: true,
+    processing: true,
+    serverSide: true,
+    filter: true,
+    lengthMenu: [[10, 20, 50, -1], [10, 20, 50, "Hepsi"]],
+    pageLength: 10,
+    searching: true,
+    info: true,
+    lengthChange: true,
+    paging: true,
+    bAutoWidth: false,
+    pagingType: "full_numbers",
+    fnPreDrawCallback: function () { ShowLoadingAnimation(); },
+    fnDrawCallback: function () { HideLoadingAnimation(); }
 });
 
 

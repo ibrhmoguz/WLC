@@ -2,78 +2,188 @@
     $(function () {
         $("#masterTitle").html("<i class='fa fa-cube'></i> Raporlar");
         $("#masterDescription").text("Sistemde tanımlı WLAN'ları raporlar.");
-        $("#tableRaporGunlukAP").dataTable({
-            "sAjaxSource": "Default/RaporGunlukAp",
-            "aaSorting": [[0, 'asc']],
-            "retrieve": true,
-            "searching": false
-        });
+        RaporGunlukAP();
 
         $("#RaporGunlukAP").click(function () {
-            $("#tableRaporGunlukAP").dataTable({
-                "sAjaxSource": "Default/RaporGunlukAp",
-                "aaSorting": [[0, 'asc']],
-                "retrieve": true,
-                "searching": false
-            });
+            RaporGunlukAP();
         });
         $("#RaporGunlukKullaniciAP").click(function () {
-            $("#tableRaporGunlukKullaniciAP").dataTable({
-                "sAjaxSource": "Default/RaporGunlukKullaniciAp",
-                "aaSorting": [[1, 'asc']],
-                "retrieve": true,
-                "searching": false
-            });
+            RaporGunlukKullaniciAP();
         });
         $("#RaporToplamAP").click(function () {
-            $("#tableRaporToplamAP").dataTable({
-                "sAjaxSource": "Default/RaporToplamAp",
-                "aaSorting": [[0, 'asc']],
-                "retrieve": true,
-                "searching": false
-            });
+            RaporToplamAP();
         });
         $("#RaporToplamIlAP").click(function () {
-            $("#tableRaporToplamIlAP").dataTable({
-                "sAjaxSource": "Default/RaporToplamIlAp",
-                "aaSorting": [[0, 'asc']],
-                "retrieve": true,
-                "searching": false
-            });
+            RaporToplamIlAP();
         });
         $("#RaporToplamIlceAP").click(function () {
-            $("#tableRaporToplamIlceAP").dataTable({
-                "sAjaxSource": "Default/RaporToplamIlceAp",
-                "aaSorting": [[0, 'asc']],
-                "retrieve": true,
-                "searching": false
-            });
+            RaporToplamIlceAP();
         });
         $("#RaporToplamOkulAP").click(function () {
-            $("#tableRaporToplamOkulAP").dataTable({
-                "sAjaxSource": "Default/RaporToplamOkulAp",
-                "aaSorting": [[0, 'asc']],
-                "retrieve": true,
-                "searching": false,
-                "serverSide": false,
-                dom: 'Bfrtip',
-                buttons: [
-                {
-                    extend: 'print',
-                    className: 'btn',
-                    defaultContent: '',
-                    title: 'Okul Bazında AP Sayı Raporu',
-                    text: '<i class="fa fa-print"></i> Print',
-                },
-                {
-                    extend: 'excelHtml5',
-                    className: 'btn',
-                    defaultContent: '',
-                    title: 'Okul Bazında AP Sayı Raporu',
-                    text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
-                }]
-            });
+            RaporToplamOkulAP();
         });
+
+        function RaporGunlukAP() {
+            $("#tableRaporGunlukAP").dataTable({
+                sAjaxSource: "Default/RaporGunlukAp",
+                aaSorting: [[0, 'asc']],
+                retrieve: true,
+                searching: false,
+                serverSide: false,
+                dom: 'Blfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Günlük AP Sayı Raporu',
+                        text: '<i class="fa fa-print"></i> Print',
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Günlük AP Sayı Raporu',
+                        text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
+                    }
+                ]
+            });
+        }
+
+        function RaporGunlukKullaniciAP() {
+            $("#tableRaporGunlukKullaniciAP").dataTable({
+                sAjaxSource: "Default/RaporGunlukKullaniciAp",
+                aaSorting: [[1, 'asc']],
+                retrieve: true,
+                searching: false,
+                serverSide: false,
+                dom: 'Blfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Kullanıcı Günlük AP Sayı Raporu',
+                        text: '<i class="fa fa-print"></i> Print',
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Kullanıcı Günlük  Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
+                    }
+                ]
+            });
+        }
+
+        function RaporToplamAP() {
+            $("#tableRaporToplamAP").dataTable({
+                sAjaxSource: "Default/RaporToplamAp",
+                aaSorting: [[0, 'asc']],
+                retrieve: true,
+                searching: false,
+                serverSide: false,
+                dom: 'Blfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Toplam AP Sayı Raporu',
+                        text: '<i class="fa fa-print"></i> Print',
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Toplam Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
+                    }
+                ]
+            });
+        }
+
+        function RaporToplamIlAP() {
+            $("#tableRaporToplamIlAP").dataTable({
+                sAjaxSource: "Default/RaporToplamIlAp",
+                aaSorting: [[0, 'asc']],
+                retrieve: true,
+                searching: false,
+                serverSide: false,
+                dom: 'Blfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'İl Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-print"></i> Print',
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'İl Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
+                    }
+                ]
+            });
+        }
+
+        function RaporToplamIlceAP() {
+            $("#tableRaporToplamIlceAP").dataTable({
+                sAjaxSource: "Default/RaporToplamIlceAp",
+                aaSorting: [[0, 'asc']],
+                retrieve: true,
+                searching: false,
+                serverSide: false,
+                dom: 'Blfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'İlçe Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-print"></i> Print',
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'İlçe Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
+                    }
+                ]
+            });
+        }
+
+        function RaporToplamOkulAP() {
+            $("#tableRaporToplamOkulAP").dataTable({
+                sAjaxSource: "Default/RaporToplamOkulAp",
+                aaSorting: [[0, 'asc']],
+                retrieve: true,
+                searching: false,
+                serverSide: false,
+                dom: 'Blfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Okul Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-print"></i> Print',
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        className: 'btn',
+                        defaultContent: '',
+                        title: 'Okul Bazında AP Sayı Raporu',
+                        text: '<i class="fa fa-file-excel-o"></i> Excel Rapor'
+                    }
+                ]
+            });
+        }
     });
 </script>
 

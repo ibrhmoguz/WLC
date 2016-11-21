@@ -29,7 +29,16 @@ namespace WLC.Domain.Repo
                 var wlcTanim = context.WLCTanimlar.Find(Convert.ToInt32(id));
                 if (wlcTanim != null)
                 {
-                    wlcTanim.DONE = true;
+                    if (!wlcTanim.APSAYISI.Equals(wlcTanim.YAPILANAPSAYISI))
+                    {
+                        wlcTanim.YAPILANAPSAYISI = string.IsNullOrEmpty(wlcTanim.YAPILANAPSAYISI) ? "1" : (Convert.ToInt32(wlcTanim.YAPILANAPSAYISI) + 1).ToString();
+
+                        if (wlcTanim.APSAYISI.Equals(wlcTanim.YAPILANAPSAYISI))
+                        {
+                            wlcTanim.DONE = true;
+                        }
+                    }
+
                     wlcTanim.KULLANICI = kullanici;
                     wlcTanim.TARIH = DateTime.Now;
                 }
