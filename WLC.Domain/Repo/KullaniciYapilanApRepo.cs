@@ -9,32 +9,24 @@ using WLC.Domain.Interface;
 
 namespace WLC.Domain.Repo
 {
-    public class WLCTanimRepo : IWLCTanimRepo
+    public class KullaniciYapilanApRepo : IKullaniciYapilanAp
     {
         private EFDbContext context = new EFDbContext();
 
-        private IKullaniciYapilanAp kullaniciYapilanApRepo;
-
-        public IEnumerable<WLCTanim> WLCTanimlar
+        public IEnumerable<KullaniciYapilanAp> KullaniciYapilanApler
         {
-            get { return context.WLCTanimlar.ToList(); }
+            get
+            {
+                return context.KullaniciYapilanApler.ToList();
+            }
         }
-
-        public WLCTanimRepo(IKullaniciYapilanAp kyr)
-        {
-            kullaniciYapilanApRepo = kyr;
-        }
-
         public bool WLCKaydet(string id, string kullanici)
         {
             if (string.IsNullOrEmpty(id))
             {
                 return false;
             }
-            
-            var dbConext = context.Database.BeginTransaction();
-
-            try
+            else
             {
                 var wlcTanim = context.WLCTanimlar.Find(Convert.ToInt32(id));
                 if (wlcTanim != null)
@@ -51,20 +43,30 @@ namespace WLC.Domain.Repo
 
                     wlcTanim.KULLANICI = kullanici;
                     wlcTanim.TARIH = DateTime.Now;
-
-                    kullaniciYapilanApRepo.KullaniciYapilanApKaydet(id, kullanici);
-
-                    context.SaveChanges();
-                    dbConext.Commit();
                 }
-
-                return true;
             }
-            catch
+            context.SaveChanges();
+            return true;
+        }
+
+
+        public bool KullaniciYapilanApKaydet(string id, string kullanici)
+        {
+            if (string.IsNullOrEmpty(id))
             {
-                dbConext.Rollback();
                 return false;
             }
+
+            var kullaniciYapilanAp = new KullaniciYapilanAp()
+            {
+                ID = Convert.ToInt32(id),
+                Tarih = DateTime.Now,
+                Kullanici = kullanici
+            };
+            context.KullaniciYapilanApler.Add(kullaniciYapilanAp);
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

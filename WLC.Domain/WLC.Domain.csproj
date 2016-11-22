@@ -50,10 +50,13 @@
   <ItemGroup>
     <Compile Include="Concrete\EFDbContext.cs" />
     <Compile Include="Entities\Kullanici.cs" />
+    <Compile Include="Entities\KullaniciYapilanAp.cs" />
     <Compile Include="Entities\WLCTanim.cs" />
+    <Compile Include="Interface\IKullaniciYapilanAp.cs" />
     <Compile Include="Interface\IWLCTanimRepo.cs" />
     <Compile Include="Interface\IKullaniciRepo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repo\KullaniciYapilanApRepo.cs" />
     <Compile Include="Repo\WLCTanimRepo.cs" />
     <Compile Include="Repo\KullaniciRepo.cs" />
   </ItemGroup>

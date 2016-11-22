@@ -50,6 +50,7 @@ namespace WLC.Admin.Infrastructure
             kernel.Bind<IAuthProvider>().To<FormsAuthProvider>();
             kernel.Bind<IKullaniciRepo>().To<KullaniciRepo>();
             kernel.Bind<IWLCTanimRepo>().To<WLCTanimRepo>();
+            kernel.Bind<IKullaniciYapilanAp>().To<KullaniciYapilanApRepo>();
         }
     }
 }

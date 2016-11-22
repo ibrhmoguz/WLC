@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
 using Newtonsoft.Json;
+using Ninject.Activation;
 using WLC.Admin.Infrastructure.Concrete;
 using WLC.Domain.Entities;
 using WLC.Domain.Interface;
@@ -18,9 +19,11 @@ namespace WLC.Admin.Controllers
     public class DefaultController : Controller
     {
         private IWLCTanimRepo wlcTanimRepo;
-        public DefaultController(IWLCTanimRepo wtr)
+        private IKullaniciYapilanAp kullaniciYapilanApRepo;
+        public DefaultController(IWLCTanimRepo wtr, IKullaniciYapilanAp kya)
         {
             wlcTanimRepo = wtr;
+            kullaniciYapilanApRepo = kya;
         }
 
         public ActionResult Index()
@@ -56,20 +59,65 @@ namespace WLC.Admin.Controllers
             if (!string.IsNullOrEmpty(iSearch))
             {
                 var search = iSearch.ToLower();
-                filteredList = wlcTanimRepo.WLCTanimlar.Where(x => (!x.APSAYISI.IsEmpty() && x.APSAYISI.ToLower().Contains(search)) ||
-                                                   (!x.FLEXCONNAME.IsEmpty() && x.FLEXCONNAME.ToLower().Contains(search)) ||
-                                                   (!x.IL.IsEmpty() && x.IL.ToLower().Contains(search)) ||
-                                                   (!x.ILCE.IsEmpty() && x.ILCE.ToLower().Contains(search)) ||
-                                                   (!x.IP.IsEmpty() && x.IP.ToLower().Contains(search)) ||
-                                                   (!x.OKULADI.IsEmpty() && x.OKULADI.ToLower().Contains(search)) ||
-                                                   (!x.OKULKODU.IsEmpty() && x.OKULKODU.ToLower().Contains(search)) ||
-                                                   (!x.SUBNET.IsEmpty() && x.SUBNET.ToLower().Contains(search)) ||
-                                                   (!x.TESISKODU.IsEmpty() && x.TESISKODU.ToLower().Contains(search)) ||
-                                                   (!x.WLC1IP.IsEmpty() && x.WLC1IP.ToLower().Contains(search)) ||
-                                                   (!x.WLC1NAME.IsEmpty() && x.WLC1NAME.ToLower().Contains(search)) ||
-                                                   (!x.WLC2IP.IsEmpty() && x.WLC2IP.ToLower().Contains(search)) ||
-                                                   (!x.WLC2NAME.IsEmpty() && x.WLC2NAME.ToLower().Contains(search)) ||
-                                                   (!x.SERVERNAME.IsEmpty() && x.SERVERNAME.ToLower().Contains(search)));
+                //filteredList = wlcTanimRepo.WLCTanimlar.Where(x => (!x.APSAYISI.IsEmpty() && x.APSAYISI.ToLower().Contains(search)) ||
+                //                                   (!x.FLEXCONNAME.IsEmpty() && x.FLEXCONNAME.ToLower().Contains(search)) ||
+                //                                   (!x.IL.IsEmpty() && x.IL.ToLower().Contains(search)) ||
+                //                                   (!x.ILCE.IsEmpty() && x.ILCE.ToLower().Contains(search)) ||
+                //                                   //(!x.IP.IsEmpty() && x.IP.ToLower().Contains(search)) ||
+                //                                   (!x.OKULADI.IsEmpty() && x.OKULADI.ToLower().Contains(search)) ||
+                //                                   (!x.OKULKODU.IsEmpty() && x.OKULKODU.ToLower().Contains(search)) ||
+                //                                   (!x.SUBNET.IsEmpty() && x.SUBNET.ToLower().Contains(search)) ||
+                //                                   (!x.TESISKODU.IsEmpty() && x.TESISKODU.ToLower().Contains(search)) ||
+                //                                   (!x.WLC1IP.IsEmpty() && x.WLC1IP.ToLower().Contains(search)) ||
+                //                                   (!x.WLC1NAME.IsEmpty() && x.WLC1NAME.ToLower().Contains(search)) ||
+                //                                   (!x.WLC2IP.IsEmpty() && x.WLC2IP.ToLower().Contains(search)) ||
+                //                                   (!x.WLC2NAME.IsEmpty() && x.WLC2NAME.ToLower().Contains(search)) ||
+                //                                   (!x.SERVERNAME.IsEmpty() && x.SERVERNAME.ToLower().Contains(search)));
+
+                int ipBlock;
+                var inputIpArray = iSearch.Split(new[] { '.' });
+                if (inputIpArray.Any())
+                {
+                    var nonIpResult = inputIpArray.Where(ip => !Int32.TryParse(ip, out ipBlock));
+                    var subNetFilteredList = new List<WLCTanim>();
+                    if (!nonIpResult.Any() && inputIpArray.Count() > 2)
+                    {
+                        foreach (var wlc in wlcTanimRepo.WLCTanimlar)
+                        {
+                            var parsedIpArray = wlc.IP.Split(new[] { '.' });
+                            if (parsedIpArray[0].Equals(inputIpArray[0]) &&
+                                parsedIpArray[1].Equals(inputIpArray[1]) &&
+                                (parsedIpArray[2].Equals(inputIpArray[2]) || wlc.SUBNET.Equals("23") && parsedIpArray[2].Equals((Convert.ToInt32(inputIpArray[2]) - 1).ToString())))
+                            {
+                                switch (wlc.SUBNET)
+                                {
+                                    case "23":
+                                        subNetFilteredList.Add(wlc);
+                                        break;
+                                    case "24":
+                                        subNetFilteredList.Add(wlc);
+                                        break;
+                                    case "25":
+                                        if (inputIpArray.Count() == 4)
+                                        {
+                                            Int32.TryParse(inputIpArray[3], out ipBlock);
+                                            if ((ipBlock < 128 && parsedIpArray[3].Equals("0")) ||
+                                                (ipBlock >= 128 && parsedIpArray[3].Equals("128")))
+                                            {
+                                                subNetFilteredList.Add(wlc);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            subNetFilteredList.Add(wlc);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    filteredList = subNetFilteredList;
+                }
             }
 
             Func<WLCTanim, string> orderFunc = (item => iSortColumnIndex == 1
@@ -116,6 +164,7 @@ namespace WLC.Admin.Controllers
                                 item.OKULADI,
                                 item.OKULKODU,
                                 item.APSAYISI,
+                                item.YAPILANAPSAYISI,
                                 item.WLC1NAME,
                                 item.WLC1IP,
                                 item.WLC2NAME,
@@ -152,10 +201,6 @@ namespace WLC.Admin.Controllers
 
         public string RaporGunlukAp()
         {
-            /*
-            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
-            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
-             * */
             var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             var iSortDirection = Request["sSortDir_0"];
 
@@ -169,15 +214,8 @@ namespace WLC.Admin.Controllers
                                        ));
 
             var totalRecords = groupedList.Count();
-            //if (iDisplayLength == -1)
-            //{
-            //    iDisplayLength = totalRecords;
-            //}
-
             Func<Tuple<string, int>, string> orderFunc = (item => iSortColumnIndex == 0 ? item.Item1 : item.Item2.ToString());
-
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
-            //var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
@@ -195,40 +233,38 @@ namespace WLC.Admin.Controllers
 
         public string RaporGunlukKullaniciAp()
         {
-            /*
-            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
-            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
-             * */
             var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             var iSortDirection = Request["sSortDir_0"];
 
-            var doneWlcList = wlcTanimRepo.WLCTanimlar.Where(x => !x.YAPILANAPSAYISI.Equals("0"));
-            var groupedList = (from wlc in doneWlcList
-                               group wlc by new
+            var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
+                               join k in kullaniciYapilanApRepo.KullaniciYapilanApler on wlc.ID equals k.ID
+                               select new
                                {
-                                   TARIH = wlc.TARIH.Value.ToShortDateString(),
-                                   wlc.KULLANICI
-                               } into wlcGrouped
-                               select new Tuple<string, string, string>(
+                                   k.Kullanici,
+                                   Okuladi = wlc.OKULADI,
+                                   TARIH = k.Tarih.Value.ToShortDateString(),
+                                   k.ID
+                               } into x
+                               group x by new
+                                {
+                                    x.Kullanici, x.Okuladi, x.TARIH
+                                } into wlcGrouped
+                               select new Tuple<string, string, string, string>(
                                    wlcGrouped.Key.TARIH,
-                                   wlcGrouped.Key.KULLANICI,
-                                   wlcGrouped.Sum(x => Convert.ToInt32(x.YAPILANAPSAYISI)).ToString()
+                                   wlcGrouped.Key.Kullanici,
+                                   wlcGrouped.Key.Okuladi,
+                                   wlcGrouped.Select(x => x.ID).Distinct().Count().ToString()
                                ));
 
             var totalRecords = groupedList.Count();
-            //if (iDisplayLength == -1)
-            //{
-            //    iDisplayLength = totalRecords;
-            //}
-
-            Func<Tuple<string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
+            Func<Tuple<string, string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
                 ? item.Item1
                 : iSortColumnIndex == 1
                     ? item.Item2
-                    : item.Item3);
-
+                    : iSortColumnIndex == 2
+                        ? item.Item3
+                        : item.Item4);
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
-            //var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
@@ -239,7 +275,8 @@ namespace WLC.Admin.Controllers
                           { 
                               item.Item1, 
                               item.Item2, 
-                              item.Item3
+                              item.Item3,
+                              item.Item4
                           })
             };
             return JsonConvert.SerializeObject(result);
@@ -264,10 +301,6 @@ namespace WLC.Admin.Controllers
 
         public string RaporToplamIlAp()
         {
-            /*
-            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
-            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
-             * */
             var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             var iSortDirection = Request["sSortDir_0"];
 
@@ -281,11 +314,6 @@ namespace WLC.Admin.Controllers
                                ));
 
             var totalRecords = groupedList.Count();
-            //if (iDisplayLength == -1)
-            //{
-            //    iDisplayLength = totalRecords;
-            //}
-
             Func<Tuple<string, string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
                 ? item.Item1
                 : iSortColumnIndex == 1
@@ -295,7 +323,6 @@ namespace WLC.Admin.Controllers
                         : item.Item4);
 
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
-            //var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
@@ -315,10 +342,6 @@ namespace WLC.Admin.Controllers
 
         public string RaporToplamIlceAp()
         {
-            /*
-            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
-            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
-             * */
             var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             var iSortDirection = Request["sSortDir_0"];
 
@@ -332,11 +355,6 @@ namespace WLC.Admin.Controllers
                                ));
 
             var totalRecords = groupedList.Count();
-            //if (iDisplayLength == -1)
-            //{
-            //    iDisplayLength = totalRecords;
-            //}
-
             Func<Tuple<string, string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
                 ? item.Item1
                 : iSortColumnIndex == 1
@@ -346,7 +364,6 @@ namespace WLC.Admin.Controllers
                         : item.Item4);
 
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
-            //var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {
@@ -365,10 +382,6 @@ namespace WLC.Admin.Controllers
 
         public string RaporToplamOkulAp()
         {
-            /*
-            var iDisplayLength = int.Parse(Request["iDisplayLength"]);
-            var iDisplayStart = int.Parse(Request["iDisplayStart"]);
-             * */
             var iSortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             var iSortDirection = Request["sSortDir_0"];
 
@@ -390,11 +403,6 @@ namespace WLC.Admin.Controllers
                                ));
 
             var totalRecords = groupedList.Count();
-            //if (iDisplayLength == -1)
-            //{
-            //    iDisplayLength = totalRecords;
-            //}
-
             Func<Tuple<string, string, string, string, string, string>, string> orderFunc =
                 (item => iSortColumnIndex == 0
                     ? item.Item1
@@ -409,7 +417,6 @@ namespace WLC.Admin.Controllers
                                     : item.Item6);
 
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
-            //var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
 
             var result = new
             {

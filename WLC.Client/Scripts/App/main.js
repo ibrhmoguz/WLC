@@ -12,7 +12,7 @@ $(document).bind("ajaxSend", function () {
 
 
 function ShowLoadingAnimation() {
-    $('#LoadingDiv').modal({ position: 'center' });
+    //$('#LoadingDiv').modal({ position: 'center' });
 }
 
 function HideLoadingAnimation() {

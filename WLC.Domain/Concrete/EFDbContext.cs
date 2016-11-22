@@ -25,6 +25,7 @@ namespace WLC.Domain.Concrete
 
         public DbSet<Kullanici> Kullanicilar { get; set; }
         public DbSet<WLCTanim> WLCTanimlar { get; set; }
+        public DbSet<KullaniciYapilanAp> KullaniciYapilanApler{ get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
