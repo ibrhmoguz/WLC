@@ -129,17 +129,17 @@ namespace WLC.Admin.Controllers
                         : iSortColumnIndex == 4
                             ? item.OKULKODU
                             : iSortColumnIndex == 5
-                                ? item.APSAYISI
+                                ? item.TESISKODU
                                 : iSortColumnIndex == 6
-                                    ? item.WLC1NAME
+                                    ? item.APSAYISI
                                     : iSortColumnIndex == 7
-                                        ? item.WLC1IP
+                                        ? item.WLC1NAME
                                         : iSortColumnIndex == 8
-                                            ? item.WLC2IP
+                                            ? item.WLC1IP
                                             : iSortColumnIndex == 9
-                                                ? item.WLC2NAME
+                                                ? item.WLC2IP
                                                 : iSortColumnIndex == 10
-                                                    ? item.TESISKODU
+                                                    ? item.WLC2NAME
                                                     : iSortColumnIndex == 11
                                                         ? item.IP
                                                         : item.SUBNET);
@@ -158,7 +158,7 @@ namespace WLC.Admin.Controllers
                                 item.IL,
                                 item.ILCE,
                                 item.OKULADI,
-                                item.OKULKODU,
+                                item.OKULKODU,                                
                                 item.TESISKODU,
                                 item.APSAYISI,
                                 item.YAPILANAPSAYISI,
@@ -237,7 +237,6 @@ namespace WLC.Admin.Controllers
                                    k.Kullanici,
                                    Okuladi = wlc.OKULADI,
                                    TARIH = k.Tarih.Value.ToShortDateString(),
-                                   k.ID
                                } into x
                                group x by new
                                 {
@@ -249,7 +248,7 @@ namespace WLC.Admin.Controllers
                                    wlcGrouped.Key.TARIH,
                                    wlcGrouped.Key.Kullanici,
                                    wlcGrouped.Key.Okuladi,
-                                   wlcGrouped.Select(x => x.ID).Distinct().Count().ToString()
+                                   wlcGrouped.Count().ToString()
                                ));
 
             var totalRecords = groupedList.Count();

@@ -20,35 +20,6 @@ namespace WLC.Domain.Repo
                 return context.KullaniciYapilanApler.ToList();
             }
         }
-        public bool WLCKaydet(string id, string kullanici)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                return false;
-            }
-            else
-            {
-                var wlcTanim = context.WLCTanimlar.Find(Convert.ToInt32(id));
-                if (wlcTanim != null)
-                {
-                    if (!wlcTanim.APSAYISI.Equals(wlcTanim.YAPILANAPSAYISI))
-                    {
-                        wlcTanim.YAPILANAPSAYISI = string.IsNullOrEmpty(wlcTanim.YAPILANAPSAYISI) ? "1" : (Convert.ToInt32(wlcTanim.YAPILANAPSAYISI) + 1).ToString();
-
-                        if (wlcTanim.APSAYISI.Equals(wlcTanim.YAPILANAPSAYISI))
-                        {
-                            wlcTanim.DONE = true;
-                        }
-                    }
-
-                    wlcTanim.KULLANICI = kullanici;
-                    wlcTanim.TARIH = DateTime.Now;
-                }
-            }
-            context.SaveChanges();
-            return true;
-        }
-
 
         public bool KullaniciYapilanApKaydet(string id, string kullanici)
         {

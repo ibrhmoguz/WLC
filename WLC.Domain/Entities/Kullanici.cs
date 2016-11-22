@@ -10,6 +10,7 @@ namespace WLC.Domain.Entities
 {
     public class Kullanici
     {
+        [Key]
         public int KullaniciId { get; set; }
         [DisplayName("Kullanıcı Adı")]
         [Required]

@@ -9,7 +9,7 @@
         $("#tableWlanListesi").dataTable({
             "sAjaxSource": "Default/JsonSorgulaList",
             "aaSorting": [[1, 'asc']],
-            "fnDrawCallback": function() {
+            "fnDrawCallback": function () {
                 $(".isle").click(function () {
                     Isle($(this).attr("Id"));
                 });
@@ -27,10 +27,7 @@
                 "aTargets": [15],
                 "bSortable": false,
                 "mRender": function (data, type, row) {
-                    if (row[14] == "False") {
-                        return '<input type="button" class="btn btn-block btn-success isle" value="Ekle" Id ="' + row[0] + '"/>';
-                    }
-                    return '';
+                    return '<input type="button" class="btn btn-block btn-success isle" value="Ekle" Id ="' + row[0] + '"/>';
                 }
             }]
         });
