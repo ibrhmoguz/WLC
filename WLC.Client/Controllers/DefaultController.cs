@@ -139,14 +139,10 @@ namespace WLC.Admin.Controllers
                                             : iSortColumnIndex == 9
                                                 ? item.WLC2NAME
                                                 : iSortColumnIndex == 10
-                                                    ? item.SERVERNAME
+                                                    ? item.TESISKODU
                                                     : iSortColumnIndex == 11
-                                                        ? item.FLEXCONNAME
-                                                        : iSortColumnIndex == 12
-                                                            ? item.TESISKODU
-                                                            : iSortColumnIndex == 13
-                                                                ? item.IP
-                                                                : item.SUBNET);
+                                                        ? item.IP
+                                                        : item.SUBNET);
 
             var orderedList = (iSortDirection == "asc") ? filteredList.OrderBy(orderFunc).ToList() : filteredList.OrderByDescending(orderFunc).ToList();
             var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
@@ -163,15 +159,13 @@ namespace WLC.Admin.Controllers
                                 item.ILCE,
                                 item.OKULADI,
                                 item.OKULKODU,
+                                item.TESISKODU,
                                 item.APSAYISI,
                                 item.YAPILANAPSAYISI,
                                 item.WLC1NAME,
                                 item.WLC1IP,
                                 item.WLC2NAME,
                                 item.WLC2IP,
-                                item.SERVERNAME,
-                                item.FLEXCONNAME,
-                                item.TESISKODU,
                                 item.IP,
                                 item.SUBNET,
                                 Convert.ToString(item.DONE),
@@ -247,7 +241,9 @@ namespace WLC.Admin.Controllers
                                } into x
                                group x by new
                                 {
-                                    x.Kullanici, x.Okuladi, x.TARIH
+                                    x.Kullanici,
+                                    x.Okuladi,
+                                    x.TARIH
                                 } into wlcGrouped
                                select new Tuple<string, string, string, string>(
                                    wlcGrouped.Key.TARIH,

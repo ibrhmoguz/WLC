@@ -339,6 +339,7 @@
     <Content Include="Content\DataTables\css\semanticui.scss" />
     <Content Include="Content\DataTables\css\mixins.scss" />
     <Content Include="Content\DataTables\css\common.scss" />
+    <None Include="Properties\PublishProfiles\WLC_Publish.pubxml" />
     <None Include="Scripts\Core\jquery-2.2.0.intellisense.js" />
     <Content Include="Scripts\Core\bootstrap.validator.min.js" />
     <Content Include="Scripts\Core\buttons.html5.min.js" />

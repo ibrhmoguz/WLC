@@ -1,7 +1,7 @@
 ﻿<script type="text/javascript">
     $(function () {
-        $("#masterTitle").html("<i class='fa fa-search'></i> WLAN Listesi");
-        $("#masterDescription").text("Sistemde tanımlı WLAN'ları listeler.");
+        $("#masterTitle").html("<i class='fa fa-search'></i> Okul Listesi");
+        $("#masterDescription").text("Sistemde tanımlı okulları listeler.");
         LoadListData();
     });
 
@@ -20,15 +20,15 @@
                 "bVisible": false,
             },
             {
-                "aTargets": [16],
+                "aTargets": [14],
                 "bVisible": false,
             },
             {
-                "aTargets": [17],
+                "aTargets": [15],
                 "bSortable": false,
                 "mRender": function (data, type, row) {
-                    if (row[16] == "False") {
-                        return '<input type="button" class="btn btn-block btn-success isle" value="İşle" Id ="' + row[0] + '"/>';
+                    if (row[14] == "False") {
+                        return '<input type="button" class="btn btn-block btn-success isle" value="Ekle" Id ="' + row[0] + '"/>';
                     }
                     return '';
                 }
@@ -61,15 +61,13 @@
                             <th>İLÇE</th>
                             <th>OKUL ADI</th>
                             <th>OKUL KODU</th>
-                            <th>AP SAYISI</th>
-                            <th>YAPILAN AP SAYISI</th>
+                            <th>TESIS KODU</th>
+                            <th>AP</th>
+                            <th>YAPILAN AP</th>
                             <th>WLC1</th>
                             <th>WLC1 IP</th>
                             <th>WLC2</th>
                             <th>WLC2 IP</th>
-                            <th>SUNUCU</th>
-                            <th>FLEX</th>
-                            <th>TESIS</th>
                             <th>IP</th>
                             <th>SUBNET</th>
                             <th></th>
