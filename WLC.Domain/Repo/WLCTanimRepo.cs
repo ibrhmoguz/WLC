@@ -66,5 +66,44 @@ namespace WLC.Domain.Repo
                 return false;
             }
         }
+
+        public bool WLCCikar(string id, string kullanici)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return false;
+            }
+
+            var dbConext = context.Database.BeginTransaction();
+
+            try
+            {
+                var wlcTanim = context.WLCTanimlar.Find(Convert.ToInt32(id));
+                if (wlcTanim != null)
+                {
+                    var yapilanApSayi = Convert.ToInt32(wlcTanim.YAPILANAPSAYISI);
+                    if (yapilanApSayi > 0)
+                    {
+                        wlcTanim.YAPILANAPSAYISI = (yapilanApSayi - 1).ToString();
+                        wlcTanim.DONE = wlcTanim.APSAYISI.Equals(wlcTanim.YAPILANAPSAYISI);
+                    }
+
+                    wlcTanim.KULLANICI = kullanici;
+                    wlcTanim.TARIH = DateTime.Now;
+
+                    kullaniciYapilanApRepo.KullaniciYapilanApCikar(id, kullanici);
+
+                    context.SaveChanges();
+                    dbConext.Commit();
+                }
+
+                return true;
+            }
+            catch
+            {
+                dbConext.Rollback();
+                return false;
+            }
+        }
     }
 }

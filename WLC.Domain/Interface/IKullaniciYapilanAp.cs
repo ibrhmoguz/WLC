@@ -11,5 +11,6 @@ namespace WLC.Domain.Interface
     {
         IEnumerable<KullaniciYapilanAp> KullaniciYapilanApler { get; }
         bool KullaniciYapilanApKaydet(string id, string kullanici);
+        bool KullaniciYapilanApCikar(string id, string kullanici);
     }
 }

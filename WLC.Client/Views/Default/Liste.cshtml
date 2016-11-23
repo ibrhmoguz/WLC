@@ -11,7 +11,10 @@
             "aaSorting": [[1, 'asc']],
             "fnDrawCallback": function () {
                 $(".isle").click(function () {
-                    Isle($(this).attr("Id"));
+                    EkleCikar($(this).attr("Id"), "Ekle");
+                });
+                $(".cikar").click(function () {
+                    EkleCikar($(this).attr("Id"), "Cikar");
                 });
             },
             "aoColumnDefs": [
@@ -20,23 +23,23 @@
                 "bVisible": false,
             },
             {
-                "aTargets": [14],
+                "aTargets": [15],
                 "bVisible": false,
             },
             {
-                "aTargets": [15],
+                "aTargets": [16],
                 "bSortable": false,
                 "mRender": function (data, type, row) {
-                    return '<input type="button" class="btn btn-block btn-success isle" value="Ekle" Id ="' + row[0] + '"/>';
+                    return '<input type="button" class="btn btn-block btn-xs btn-success isle" value="Ekle" Id ="' + row[0] + '"/>' + '<input type="button" class="btn btn-block btn-xs btn-danger cikar" value="Çıkar" Id ="' + row[0] + '"/>';
                 }
             }]
         });
     }
 
-    function Isle(id) {
+    function EkleCikar(id, fonksiyon) {
         $.ajax({
             type: 'POST',
-            url: "Default/Isle",
+            url: 'Default/' + fonksiyon,
             data: "id=" + id,
             dataType: 'json',
             success: function (msg) {
@@ -59,6 +62,7 @@
                             <th>OKUL ADI</th>
                             <th>OKUL KODU</th>
                             <th>TESIS KODU</th>
+                            <th>FLEX CON</th>
                             <th>AP</th>
                             <th>YAPILAN AP</th>
                             <th>WLC1</th>

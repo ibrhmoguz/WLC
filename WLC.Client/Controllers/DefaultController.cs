@@ -118,6 +118,12 @@ namespace WLC.Admin.Controllers
                     }
                     filteredList = subNetFilteredList;
                 }
+
+                var searchedList = wlcTanimRepo.WLCTanimlar.Where(x => !x.TESISKODU.IsEmpty() && x.TESISKODU.ToLower().Contains(search));
+                if (searchedList.Any())
+                {
+                    filteredList = searchedList;
+                }
             }
 
             Func<WLCTanim, string> orderFunc = (item => iSortColumnIndex == 1
@@ -131,18 +137,20 @@ namespace WLC.Admin.Controllers
                             : iSortColumnIndex == 5
                                 ? item.TESISKODU
                                 : iSortColumnIndex == 6
-                                    ? item.APSAYISI
+                                    ? item.FLEXCONNAME
                                     : iSortColumnIndex == 7
-                                        ? item.WLC1NAME
+                                        ? item.APSAYISI
                                         : iSortColumnIndex == 8
-                                            ? item.WLC1IP
+                                            ? item.WLC1NAME
                                             : iSortColumnIndex == 9
-                                                ? item.WLC2IP
+                                                ? item.WLC1IP
                                                 : iSortColumnIndex == 10
-                                                    ? item.WLC2NAME
+                                                    ? item.WLC2IP
                                                     : iSortColumnIndex == 11
-                                                        ? item.IP
-                                                        : item.SUBNET);
+                                                        ? item.WLC2NAME
+                                                        : iSortColumnIndex == 12
+                                                            ? item.IP
+                                                            : item.SUBNET);
 
             var orderedList = (iSortDirection == "asc") ? filteredList.OrderBy(orderFunc).ToList() : filteredList.OrderByDescending(orderFunc).ToList();
             var list = orderedList.Skip(iDisplayStart).Take(iDisplayLength);
@@ -160,6 +168,7 @@ namespace WLC.Admin.Controllers
                                 item.OKULADI,
                                 item.OKULKODU,                                
                                 item.TESISKODU,
+                                item.FLEXCONNAME,
                                 item.APSAYISI,
                                 item.YAPILANAPSAYISI,
                                 item.WLC1NAME,
@@ -177,10 +186,22 @@ namespace WLC.Admin.Controllers
         }
 
         [HttpPost]
-        public string Isle(string id)
+        public string Ekle(string id)
         {
             var kullanici = Session["CurrentUserName"].ToString();
             var status = wlcTanimRepo.WLCKaydet(id, kullanici);
+            var result = new
+            {
+                Status = status.ToString()
+            };
+            return JsonConvert.SerializeObject(result);
+        }
+
+        [HttpPost]
+        public string Cikar(string id)
+        {
+            var kullanici = Session["CurrentUserName"].ToString();
+            var status = wlcTanimRepo.WLCCikar(id, kullanici);
             var result = new
             {
                 Status = status.ToString()

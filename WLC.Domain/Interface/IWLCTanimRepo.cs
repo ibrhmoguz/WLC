@@ -11,5 +11,6 @@ namespace WLC.Domain.Interface
     {
         IEnumerable<WLCTanim> WLCTanimlar { get; }
         bool WLCKaydet(string id, string kullanici);
+        bool WLCCikar(string id, string kullanici);
     }
 }
