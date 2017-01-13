@@ -363,21 +363,24 @@ namespace WLC.Admin.Controllers
 
             var groupedList = (from wlc in wlcTanimRepo.WLCTanimlar
                                group wlc by new { wlc.IL, wlc.ILCE } into wlcGrouped
-                               select new Tuple<string, string, string, string>(
-                                   wlcGrouped.Key.IL + "-" + wlcGrouped.Key.ILCE,
+                               select new Tuple<string, string, string, string, string>(
+                                   wlcGrouped.Key.IL,
+                                   wlcGrouped.Key.ILCE,
                                    wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
                                    wlcGrouped.Sum(x => Convert.ToInt32(x.YAPILANAPSAYISI)).ToString(),
                                    (wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)) - wlcGrouped.Sum(x => Convert.ToInt32(x.YAPILANAPSAYISI))).ToString()
                                ));
 
             var totalRecords = groupedList.Count();
-            Func<Tuple<string, string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
+            Func<Tuple<string, string, string, string, string>, string> orderFunc = (item => iSortColumnIndex == 0
                 ? item.Item1
                 : iSortColumnIndex == 1
                     ? item.Item2
                     : iSortColumnIndex == 2
                         ? item.Item3
-                        : item.Item4);
+                        : iSortColumnIndex == 3
+                            ? item.Item4
+                            : item.Item5);
 
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
 
@@ -390,7 +393,8 @@ namespace WLC.Admin.Controllers
                           { item.Item1, 
                               item.Item2, 
                               item.Item3,
-                              item.Item4
+                              item.Item4,
+                              item.Item5
                           })
             };
             return JsonConvert.SerializeObject(result);
@@ -409,9 +413,10 @@ namespace WLC.Admin.Controllers
                                    wlc.ILCE,
                                    wlc.OKULKODU
                                } into wlcGrouped
-                               select new Tuple<string, string, string, string, string, string>(
+                               select new Tuple<string, string, string, string, string, string, string>(
                                    wlcGrouped.Key.OKULADI,
-                                   wlcGrouped.Key.IL + "-" + wlcGrouped.Key.ILCE,
+                                   wlcGrouped.Key.IL,
+                                   wlcGrouped.Key.ILCE,
                                    wlcGrouped.Key.OKULKODU,
                                    wlcGrouped.Sum(x => Convert.ToInt32(x.APSAYISI)).ToString(),
                                    wlcGrouped.Sum(x => Convert.ToInt32(x.YAPILANAPSAYISI)).ToString(),
@@ -419,7 +424,7 @@ namespace WLC.Admin.Controllers
                                ));
 
             var totalRecords = groupedList.Count();
-            Func<Tuple<string, string, string, string, string, string>, string> orderFunc =
+            Func<Tuple<string, string, string, string, string, string, string>, string> orderFunc =
                 (item => iSortColumnIndex == 0
                     ? item.Item1
                     : iSortColumnIndex == 1
@@ -429,8 +434,12 @@ namespace WLC.Admin.Controllers
                             : iSortColumnIndex == 3
                                 ? item.Item4
                                 : iSortColumnIndex == 4
-                                    ? item.Item5
-                                    : item.Item6);
+                                    ? item.Item4
+                                    : iSortColumnIndex == 5
+                                        ? item.Item5
+                                        : iSortColumnIndex == 6
+                                            ? item.Item6
+                                            : item.Item7);
 
             var orderedList = (iSortDirection == "asc") ? groupedList.OrderBy(orderFunc).ToList() : groupedList.OrderByDescending(orderFunc).ToList();
 
@@ -446,7 +455,8 @@ namespace WLC.Admin.Controllers
                               item.Item3,
                               item.Item4, 
                               item.Item5,
-                              item.Item6
+                              item.Item6,
+                              item.Item7
                           })
             };
             return JsonConvert.SerializeObject(result);
